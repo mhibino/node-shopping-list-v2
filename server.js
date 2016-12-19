@@ -51,6 +51,26 @@ app.post('/shopping-list', jsonParser, (req, res) => {
 app.get('/recipes', (req, res) => {
   res.json(Recipes.get());
 })
+// create a post endpoint for /recipes
+app.post('/recipes', jsonParser, (req, res) => {
+  // validate the req body, checking for required data
+  const requiredFields = ['name', 'ingredients'];
+  for (let i = 0; i < requiredFields.length; i++) {
+    let field = requiredFields[i];
+    // if missing, log error, send error status code, send error message
+    if (!field in req.body) {
+      const errMsg = `Missing ${field} in request body`;
+      console.error(errMsg);
+      res.status(400).send(errMsg);
+    }
+  }
+  // create a new recipe item and return json object representation of new item
+  const recipeItem = Recipes.create(req.body.name, req.body.ingredients);
+  res.status(201).json(recipeItem);
+});
+  
+    
+  
 
 app.listen(process.env.PORT || 8080, () => {
   console.log(`Your app is listening on port ${process.env.PORT || 8080}`);
